@@ -1,0 +1,510 @@
+### STARTUP ###
+import random
+
+import pygame
+from pygame.math import Vector2
+
+pygame.init()
+
+    ## AUDIO SETTINGS ##
+
+pygame.mixer.init()
+pygame.mixer.pre_init(44100, -16, 2, 512)
+
+    #### Screen ####
+
+SCREENX = 640
+SCREENY = 480
+SCREEN = pygame.display.set_mode((SCREENX, SCREENY))
+
+    #### DISPLAY ####
+
+pygame.display.set_caption("Snake Game | By Sean & Gianfranco")
+
+logo = pygame.image.load('sg.png')
+pygame.display.set_icon(logo)
+
+    ### GRID FOR BG ###
+
+def Grid():
+    gridSize = 32
+    for x in range(0, SCREENX, gridSize):
+        for y in range(0, SCREENY, gridSize):
+            rect = pygame.Rect(x, y, gridSize, gridSize)
+            pygame.draw.rect(SCREEN, WHITE, rect, 1)
+
+    # FPS #
+
+clock = pygame.time.Clock()
+
+    ### BACKGROUND ###
+
+menubg = pygame.image.load('menubg.png')
+bg = pygame.transform.scale(menubg, (SCREENX, SCREENY))
+rect = bg.get_rect()
+WHITE = (255, 255, 255)
+GREEN = (89, 192, 26)
+BLACK = (0, 0, 0)
+
+apple1 = pygame.image.load('apple.png').convert_alpha()
+apple = pygame.transform.scale(apple1, (32, 32))
+
+
+    # GAME MUSIC #
+
+gmusic = pygame.mixer.music.load('sgmusic.mp3')
+pygame.mixer.music.play(-1)
+
+volume = pygame.mixer.music.set_volume(0.1)
+
+    #### BIG CLASSROOM ####
+
+
+start = pygame.image.load('start.JPG')
+
+credit = pygame.image.load('credits.JPG')
+
+leave = pygame.image.load('quit.JPG')
+
+btm = pygame.image.load('btm.JPG')
+
+pause = pygame.image.load('pause.JPG')
+
+class Button():
+    def __init__(self, x, y, image):
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+        self.click = False
+
+    def draw(self):
+        work = False
+        mouse = pygame.mouse.get_pos()
+        if self.rect.collidepoint(mouse):
+            if pygame.mouse.get_pressed()[0] == 1 and self.click == False:
+                self.click = True
+                work = True
+
+        if pygame.mouse.get_pressed()[0] == 0:
+            self.click = False
+
+        SCREEN.blit(self.image, (self.rect.x, self.rect.y))
+        return work
+
+start_button = Button(230, 235, start)
+credits_button = Button(205, 325, credit)
+leave_button = Button(260, 415, leave)
+btm_button = Button(10, 435, btm)
+pause_button = Button(620, 5, pause)
+
+
+    ## TEXT FUNCTION PALACE ##
+
+
+X = 175
+Y = 60
+
+def show_menu(X, Y):
+    menutxt = pygame.font.Font('8-BIT WONDER.TTF', 64)
+    # noinspection PyTypeChecker
+    menu_txt = menutxt.render("""MENU""", 1, (0, 0, 0))
+    SCREEN.blit(menu_txt, (X, Y))
+
+
+XXXX = 160
+YYYY = 80
+
+
+def pause_text(XXXX, YYYY):
+    pausetxt = pygame.font.Font('8-BIT WONDER.TTF', 55)
+    # noinspection PyTypeChecker
+    pause_txt = pausetxt.render("PAUSED", 1, BLACK)
+    SCREEN.blit(pause_txt, (XXXX, YYYY))
+
+
+xxxx = 140
+yyyy = 260
+
+
+def tab(xxxx, yyyy):
+    pausehlp = pygame.font.Font('PlayGames.ttf', 25)
+    # noinspection PyTypeChecker
+    pause_hlp = pausehlp.render("Press \" TAB \" To Return To The Game", 1, BLACK)
+    SCREEN.blit(pause_hlp, (xxxx, yyyy))
+
+
+Xx = 175
+Yy = 420
+
+
+def Q(Xx, Yy):
+    qmsg = pygame.font.Font('PlayGames.ttf', 25)
+    # noinspection PyTypeChecker
+    q_msg = qmsg.render("Press \" Q \" To Exit The Game", 1, BLACK)
+    SCREEN.blit(q_msg, (Xx, Yy))
+
+
+xX = 50
+yY = 340
+
+
+def BTM(xX, yY):
+    btm = pygame.font.Font('PlayGames.ttf', 25)
+    # noinspection PyTypeChecker
+    btm_msg = btm.render("Press \" LEFT CTRL \" To Return Back To The Main Menu", 1, BLACK)
+    SCREEN.blit(btm_msg, (xX, yY))
+
+XxX = 150
+YyY = 40
+
+
+def show_credits(XxX, YyY):
+    creditxt = pygame.font.Font('8-BIT WONDER.TTF', 52)
+    # noinspection PyTypeChecker
+    credit_txt = creditxt.render("""CREDITS""", 1, (WHITE))
+    SCREEN.blit(credit_txt, (XxX, YyY))
+
+
+x = 165
+y = 130
+
+
+def show_created(x, y):
+    ctxt = pygame.font.Font('8-BIT WONDER.TTF', 32)
+    # noinspection PyTypeChecker
+    c_txt = ctxt.render("Created By", 1, (0, 23, 255))
+    SCREEN.blit(c_txt, (x, y))
+
+
+XX = 165
+YY = 215
+
+
+def show_sean(XX, YY):
+    stxt = pygame.font.Font('8-BIT WONDER.TTF', 32)
+    # noinspection PyTypeChecker
+    s_txt = stxt.render("Sean Smith", 1, (86, 150, 242))
+    SCREEN.blit(s_txt, (XX, YY))
+
+
+xxx = 85
+yyy = 320
+
+
+def show_gianfranco(xxx, yyy):
+    gtxt = pygame.font.Font('8-BIT WONDER.TTF', 32)
+    # noinspection PyTypeChecker
+    g_txt = gtxt.render("Gianfranco Leone", 1, (86, 150, 242))
+    SCREEN.blit(g_txt, (xxx, yyy))
+
+
+XXX = 265
+YYY = 265
+
+
+def show_and(XXX, YYY):
+    atxt = pygame.font.Font('8-BIT WONDER.TTF', 32)
+    # noinspection PyTypeChecker
+    a_txt = atxt.render("And", 1, (86, 150, 242))
+    SCREEN.blit(a_txt, (XXX, YYY))
+
+
+endX = 120
+endY = 150
+
+
+def endGame_txt(endX, endY):
+    game_over_txt = pygame.font.Font('8-BIT WONDER.TTF', 46)
+    # noinspection PyTypeChecker
+    game_over = game_over_txt.render("GAME OVER", True, (WHITE))
+    SCREEN.blit(game_over, (endX, endY))
+
+
+lX = 145
+lY = 325
+
+
+def lctrl(lX, lY):
+    left_text = pygame.font.Font('PlayGames.ttf', 24)
+    # noinspection PyTypeChecker
+    left_ctrl = left_text.render("Press \" Left CTRL \" To Return To Menu", True, (WHITE))
+    SCREEN.blit(left_ctrl, (lX, lY))
+
+
+tabX = 165
+tabY = 405
+
+
+def left_tab(tabX, tabY):
+    tab_text = pygame.font.Font('PlayGames.ttf', 24)
+    # noinspection PyTypeChecker
+    Tab = tab_text.render("Press \" TAB \" To Replay The Game", True, (WHITE))
+    SCREEN.blit(Tab, (tabX, tabY))
+
+
+    ### PAUSE ###
+
+
+def Pause(pausegame):
+
+    while pausegame:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_TAB:
+                    pausegame = False
+                elif event.key == pygame.K_q:
+                    pygame.quit()
+                    quit()
+                elif event.key == pygame.K_LCTRL:
+                    Menu(True)
+        SCREEN.fill((120, 202, 249))
+        pause_text(XXXX, YYYY)
+        Q(Xx, Yy)
+        BTM(xX, yY)
+        tab(xxxx, yyyy)
+        pygame.display.update()
+
+    ### END GAME ###
+
+def end_game(endGame):
+
+    while endGame:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LCTRL:
+                    Menu(True)
+                if event.key == pygame.K_TAB:
+                    PlayGame(True)
+
+        SCREEN.fill(BLACK)
+        endGame_txt(endX, endY)
+        lctrl(lX, lY)
+        left_tab(tabX, tabY)
+        pygame.display.update()
+
+
+##### START THE GAME #####
+
+def PlayGame(running):
+
+    ### CREATE THE FRUIT ###
+
+    if running:
+        class display_fruit:
+            def __init__(self):
+                self.random()
+
+            def show_fruit(self):
+                fruit_rect = pygame.Rect(int(self.pos.x * 32), int(self.pos.y * 32), 32, 32)
+                SCREEN.blit(apple, fruit_rect)
+
+            def random(self):
+                self.x = random.randint(0, 15 - 1)
+                self.y = random.randint(0, 15 - 1)
+                self.pos = Vector2(self.x, self.y)
+
+        #### CREATE THE SNAKE ####
+
+        class SNAKE:
+
+            def __init__(self):
+                self.snake_body = [Vector2(7, 8), Vector2(6, 8), Vector2(5, 8)]
+                self.direction = Vector2(1, 0)
+                self.head = pygame.image.load('snake_head.png').convert_alpha()
+                self.snake_head = pygame.transform.scale(self.head, (32, 32))
+                self.apple_crunch = pygame.mixer.Sound('apple_crunch.wav')
+                self.snake_bump = pygame.mixer.Sound('Snake_Bump.mp3')
+                self.new_body = False
+
+            def draw_snake(self):
+                for index, snake in enumerate(self.snake_body):
+                    snake_posX = int(snake.x * 32)
+                    snake_posY = int(snake.y * 32)
+                    snake_rect = pygame.Rect(snake_posX, snake_posY, 32, 32)
+                    if index == 0:
+                        SCREEN.blit(self.snake_head, snake_rect)
+                    else:
+                        pygame.draw.rect(SCREEN, (38, 142, 212), snake_rect)
+
+
+            def snake_movement(self):
+                if self.new_body:
+                    snake_body_copy = self.snake_body[:]
+                    snake_body_copy.insert(0, snake_body_copy[0] + self.direction)
+                    self.snake_body = snake_body_copy[:]
+                    self.new_body = False
+                else:
+                    snake_body_copy = self.snake_body[:-1]
+                    snake_body_copy.insert(0, snake_body_copy[0] + self.direction)
+                    self.snake_body = snake_body_copy[:]
+
+            def add_body(self):
+                self.new_body = True
+
+        #### MAKES THE GAME ACTUALLY WORK, INCLUDES SNAKE, FRUIT AND COLLISIONS ETC.. ####
+
+        class MAIN:
+
+            def __init__(self):
+                self.Snake = SNAKE()
+                self.fruit = display_fruit()
+
+            def update_snake(self):
+                self.Snake.snake_movement()
+                self.check_for_collision()
+                self.check_death()
+
+            def draw_snake_fruit(self):
+                self.fruit.show_fruit()
+                self.Snake.draw_snake()
+
+            def check_for_collision(self):
+                if self.fruit.pos == self.Snake.snake_body[0]:
+                    self.fruit.random()
+                    self.Snake.add_body()
+                    self.Snake.apple_crunch.play()
+
+            def check_death(self):
+                if not 0 <= self.Snake.snake_body[0].x < 20 or not 0 <= self.Snake.snake_body[0].y < 15:
+                    self.Snake.snake_bump.play()
+                    end_game(True)
+                    PlayGame(False)
+
+                for block in self.Snake.snake_body[1:]:
+                    if block == self.Snake.snake_body[0]:
+                        self.Snake.snake_bump.play()
+                        end_game(True)
+                        PlayGame(False)
+
+            def draw_score(self):
+                score_txt = "Score: " + str(len(self.Snake.snake_body) - 3)
+                show_score = score_obj.render(score_txt, True, (BLACK))
+                SCREEN.blit(show_score, (0, 0))
+
+        full_game = MAIN()
+
+    score_obj = pygame.font.Font('PlayGames.ttf', 32)
+
+    ### TIMER FOR SNAKE MOVEMENT ###
+
+
+    GAME_TIMER = pygame.USEREVENT
+    pygame.time.set_timer(GAME_TIMER, 150)
+
+
+    #### KEYBORD & BUTTON/MOUSE INPUTS ####
+
+    while running:
+        SCREEN.fill(GREEN)
+        Grid()
+        clock.tick(60)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if pause_button.draw():
+                Pause(True)
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    Pause(True)
+            if event.type == GAME_TIMER:
+                full_game.update_snake()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_w:
+                    if full_game.Snake.direction.y != 1:
+                        full_game.Snake.direction = Vector2(0, -1)
+                elif event.key == pygame.K_s:
+                    if full_game.Snake.direction.y != -1:
+                        full_game.Snake.direction = Vector2(0, 1)
+                elif event.key == pygame.K_a:
+                    if full_game.Snake.direction.x != 1:
+                        full_game.Snake.direction = Vector2(-1, 0)
+                elif event.key == pygame.K_d:
+                    if full_game.Snake.direction.x != -1:
+                        full_game.Snake.direction = Vector2(1, 0)
+
+        full_game.draw_snake_fruit()
+        full_game.draw_score()
+        pause_button.draw()
+        pygame.display.update()
+
+    #### GAME CREDITS WITH KEYBOARD/MOUSE INPUTS ####
+
+def Credits(credits):
+
+    while credits:
+        clock.tick(30)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if btm_button.draw():
+                Menu(True)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_b:
+                    Menu(True)
+
+        SCREEN.fill(BLACK)
+        show_credits(XxX, YyY)
+        show_created(x, y)
+        show_sean(XX, YY)
+        show_gianfranco(xxx, yyy)
+        show_and(XXX, YYY)
+        btm_button.draw()
+        pygame.display.update()
+
+
+    ##### MAIN MENU WITH KEYBOARD/MOUSE INPUTS  #####
+
+def Menu(menu):
+
+    while menu:
+        clock.tick(30)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_s:
+                    PlayGame(True)
+                    Menu(False)
+                elif event.key == pygame.K_c:
+                    Credits(True)
+                    Menu(False)
+                elif event.key == pygame.K_q:
+                    pygame.quit()
+                    quit()
+                elif event.key == pygame.K_DOWN:
+                    pygame.mixer.music.set_volume(0.9)
+                if pygame.mixer.music.get_volume():
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_DOWN:
+                            pygame.mixer.music.set_volume(0.8)
+                elif event.key == pygame.K_UP:
+                    pygame.mixer.music.set_volume(1)
+            if start_button.draw():
+                PlayGame(True)
+                Menu(False)
+            if credits_button.draw():
+                Credits(True)
+                Menu(False)
+            if leave_button.draw():
+                quit()
+                Menu(False)
+
+        SCREEN.blit(bg, rect)
+        show_menu(X, Y)
+        start_button.draw()
+        credits_button.draw()
+        leave_button.draw()
+        pygame.display.update()
+
+Menu(True)
